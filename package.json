@@ -6,7 +6,10 @@
     "dev": "next dev --turbopack",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "type": "tsc --noEmit",
+    "format": "prettier --write .",
+    "check": "npm run lint && npm run type && npm run format"
   },
   "dependencies": {
     "next": "15.1.7",
@@ -20,8 +23,11 @@
     "@types/react-dom": "^19",
     "autoprefixer": "^10.4.20",
     "eslint": "^9",
-    "eslint-config-next": "15.1.7",
+    "eslint-config-next": "^15.1.7",
+    "eslint-config-prettier": "^10.0.1",
+    "eslint-plugin-prettier": "^5.2.3",
     "postcss": "^8.5.2",
+    "prettier": "^3.5.1",
     "tailwindcss": "^3.4.17",
     "typescript": "^5"
   }
