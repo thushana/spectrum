@@ -1,5 +1,3 @@
-// app/colophon/page.tsx
-
 import { execSync } from 'child_process';
 
 import GitHubIcon from '@mui/icons-material/GitHub';
