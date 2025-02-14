@@ -9,23 +9,41 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+// Shortname model to enforce global uniqueness
+model Shortname {
+  id         String    @id @default(uuid())
+  value      String    @unique  // Globally unique shortname
+  entityId   String    @unique  // Entity ID must also be unique
+  entityType String               // "Primitive" or "Container"
+  createdAt  DateTime  @default(now())
+
+  // Relations (one-sided)
+  primitive  Primitive? @relation("PrimitiveShortname")
+  container  Container? @relation("ContainerShortname")
+}
+
 // Base Primitive model
 model Primitive {
-  id        String   @id @default(uuid())
-  type      String // "Note" (can expand to "Photo", etc.)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @default(now())
+  id                 String               @id @default(uuid())
+  type               String               // "Note", "Photo", etc.
+  createdAt          DateTime             @default(now())
+  updatedAt          DateTime             @default(now())
 
-  // Relationship to Note subclass
+  // Relation to Shortname
+  shortname          Shortname?           @relation("PrimitiveShortname", fields: [id], references: [entityId])
+
+  // Backrelation for Note
   note               Note?
-  ContainerPrimitive ContainerPrimitive[]
+
+  // Backrelation for ContainerPrimitive
+  containerPrimitive ContainerPrimitive[] // Primitive linked to multiple containers
 }
 
 // Note model (subclass of Primitive)
 model Note {
-  id        String    @id @default(uuid()) @map("primitive_id") // Foreign key from Primitive
-  text      String // Text content of the Note
-  primitive Primitive @relation(fields: [id], references: [id], onDelete: Cascade)
+  id        String     @id @default(uuid()) @map("primitive_id") // Foreign key from Primitive
+  text      String     // Text content of the Note
+  primitive Primitive  @relation(fields: [id], references: [id], onDelete: Cascade)
 }
 
 // Container model for grouping primitives
@@ -33,22 +51,25 @@ model Container {
   id         String               @id @default(uuid())
   title      String
   subtitle   String?
-  type       String // E.g., "Post", "Photostrip"
+  type       String               // E.g., "Post", "Photostrip"
   primitives ContainerPrimitive[] // Relationship to ordered primitives
   createdAt  DateTime             @default(now())
   updatedAt  DateTime             @default(now())
+
+  // Relation to Shortname
+  shortname Shortname? @relation("ContainerShortname", fields: [id], references: [entityId])
 }
 
 // ContainerPrimitive model to manage primitive ordering within a container
 model ContainerPrimitive {
-  id          String   @id @default(uuid())
+  id          String     @id @default(uuid())
   containerId String
   primitiveId String
-  order       Int // Defines order of primitives in the container
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @default(now())
+  order       Int        // Defines order of primitives in the container
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @default(now())
 
   // Relationships
-  container Container @relation(fields: [containerId], references: [id])
-  primitive Primitive @relation(fields: [primitiveId], references: [id])
+  container   Container  @relation(fields: [containerId], references: [id])
+  primitive   Primitive  @relation(fields: [primitiveId], references: [id]) // This is sufficient
 }
