@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import CreateIcon from '@mui/icons-material/Create';
 
 export default function CreatePost() {
   const [title, setTitle] = useState('');
@@ -21,7 +22,7 @@ export default function CreatePost() {
         },
         body: JSON.stringify({
           title,
-          subtitle: subtitle || undefined, // Only include if not empty
+          subtitle: subtitle || undefined,
           type: 'Post' as const,
         }),
       });
@@ -32,7 +33,6 @@ export default function CreatePost() {
       }
 
       const data = await response.json();
-      // Redirect to the new post
       window.location.href = `/posts/${data.shortname}`;
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Something went wrong');
@@ -42,48 +42,69 @@ export default function CreatePost() {
   };
 
   return (
-    <div className="max-w-2xl mx-auto p-4">
-      <h1 className="text-2xl font-bold mb-6">Create New Post</h1>
+    <div className="font-sans p-6">
+      <h1 className="text-4xl font-bold mb-4">Create New Post</h1>
+      <h2 className="text-xl font-semibold mb-2">
+        <CreateIcon className="mr-2" />
+        Post Details
+      </h2>
 
       {error && (
-        <div className="bg-red-50 text-red-500 p-4 mb-4 rounded">{error}</div>
+        <div className="bg-red-50 border border-red-200 text-red-700 p-4 mb-4 rounded">
+          {error}
+        </div>
       )}
 
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <div>
-          <label htmlFor="title" className="block text-sm font-medium mb-1">
-            Title
-          </label>
-          <input
-            type="text"
-            id="title"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            required
-            className="w-full p-2 border rounded"
-          />
-        </div>
-
-        <div>
-          <label htmlFor="subtitle" className="block text-sm font-medium mb-1">
-            Subtitle (optional)
-          </label>
-          <input
-            type="text"
-            id="subtitle"
-            value={subtitle}
-            onChange={(e) => setSubtitle(e.target.value)}
-            className="w-full p-2 border rounded"
-          />
-        </div>
-
-        <button
-          type="submit"
-          disabled={isSubmitting || !title}
-          className="bg-blue-500 text-white px-4 py-2 rounded disabled:bg-blue-300"
-        >
-          {isSubmitting ? 'Creating...' : 'Create Post'}
-        </button>
+      <form onSubmit={handleSubmit}>
+        <table className="table-auto border-collapse w-full">
+          <colgroup>
+            <col className="w-[20%]" />
+            <col />
+          </colgroup>
+          <tbody>
+            <tr className="border-t border-gray-200">
+              <td className="px-4 py-2 font-semibold text-left whitespace-nowrap">
+                <label htmlFor="title">Title</label>
+              </td>
+              <td className="px-4 py-2">
+                <input
+                  type="text"
+                  id="title"
+                  value={title}
+                  onChange={(e) => setTitle(e.target.value)}
+                  required
+                  className="w-full p-2 border rounded bg-white"
+                />
+              </td>
+            </tr>
+            <tr className="border-t border-gray-200">
+              <td className="px-4 py-2 font-semibold text-left whitespace-nowrap">
+                <label htmlFor="subtitle">Subtitle</label>
+              </td>
+              <td className="px-4 py-2">
+                <input
+                  type="text"
+                  id="subtitle"
+                  value={subtitle}
+                  onChange={(e) => setSubtitle(e.target.value)}
+                  className="w-full p-2 border rounded bg-white"
+                />
+              </td>
+            </tr>
+            <tr className="border-t border-gray-200">
+              <td className="px-4 py-2"></td>
+              <td className="px-4 py-2">
+                <button
+                  type="submit"
+                  disabled={isSubmitting || !title}
+                  className="bg-gray-900 hover:bg-gray-800 text-white px-4 py-2 rounded disabled:bg-gray-300 disabled:cursor-not-allowed"
+                >
+                  {isSubmitting ? 'Creating...' : 'Create Post'}
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
       </form>
     </div>
   );

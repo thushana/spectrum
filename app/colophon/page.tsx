@@ -106,7 +106,7 @@ const Colophon = () => {
   const { git, vercel } = getGitInfo();
 
   return (
-    <div className="font-sans p-6">
+    <div className="font-sans">
       <h1 className="text-4xl font-bold mb-4">Colophon</h1>
       <h2 className="text-xl font-semibold mb-2">
         <GitHubIcon className="mr-2" />
