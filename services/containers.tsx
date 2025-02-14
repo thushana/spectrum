@@ -7,12 +7,12 @@ const prisma = new PrismaClient();
 type ContainerType = 'Post' | 'Photostrip';
 
 export class ContainerService {
-  static async create({ 
-    title, 
+  static async create({
+    title,
     subtitle,
-    type
-  }: { 
-    title: string; 
+    type,
+  }: {
+    title: string;
     subtitle?: string;
     type: ContainerType;
   }) {
@@ -41,14 +41,14 @@ export class ContainerService {
 
         return {
           container,
-          shortname: shortname.value
+          shortname: shortname.value,
         };
       });
 
       return result;
     } catch (error) {
-      throw error instanceof Error 
-        ? error 
+      throw error instanceof Error
+        ? error
         : new Error('Failed to create container');
     }
   }

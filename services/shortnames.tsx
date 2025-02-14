@@ -11,7 +11,9 @@ export class ShortnameService {
       .replace(/(^-|-$)/g, '');
   }
 
-  private static async findNextAvailableNumber(baseSlug: string): Promise<number | null> {
+  private static async findNextAvailableNumber(
+    baseSlug: string,
+  ): Promise<number | null> {
     // First check if base slug is available
     const existingBase = await prisma.shortname.findFirst({
       where: { value: baseSlug },
@@ -52,11 +54,11 @@ export class ShortnameService {
     return nextNumber ? `${baseSlug}-${nextNumber}` : baseSlug;
   }
 
-  static async create({ 
+  static async create({
     value,
     entityId,
-    entityType 
-  }: { 
+    entityType,
+  }: {
     value: string;
     entityId: string;
     entityType: 'Container' | 'Primitive';
