@@ -12,6 +12,10 @@
     "check": "npm run lint && npm run type && npm run format"
   },
   "dependencies": {
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.0",
+    "@mui/icons-material": "^6.4.4",
+    "@mui/material": "^6.4.4",
     "@prisma/client": "^6.3.1",
     "@vercel/speed-insights": "^1.2.0",
     "next": "15.1.7",
