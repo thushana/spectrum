@@ -1,14 +1,54 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
+// Generator configuration
 generator client {
   provider = "prisma-client-js"
 }
 
+// Datasource configuration
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
+}
+
+// Base Primitive model
+model Primitive {
+  id        String   @id @default(uuid())
+  type      String // "Note" (can expand to "Photo", etc.)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
+
+  // Relationship to Note subclass
+  note               Note?
+  ContainerPrimitive ContainerPrimitive[]
+}
+
+// Note model (subclass of Primitive)
+model Note {
+  id        String    @id @default(uuid()) @map("primitive_id") // Foreign key from Primitive
+  text      String // Text content of the Note
+  primitive Primitive @relation(fields: [id], references: [id], onDelete: Cascade)
+}
+
+// Container model for grouping primitives
+model Container {
+  id         String               @id @default(uuid())
+  title      String
+  subtitle   String?
+  type       String // E.g., "Post", "Photostrip"
+  primitives ContainerPrimitive[] // Relationship to ordered primitives
+  createdAt  DateTime             @default(now())
+  updatedAt  DateTime             @default(now())
+}
+
+// ContainerPrimitive model to manage primitive ordering within a container
+model ContainerPrimitive {
+  id          String   @id @default(uuid())
+  containerId String
+  primitiveId String
+  order       Int // Defines order of primitives in the container
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @default(now())
+
+  // Relationships
+  container Container @relation(fields: [containerId], references: [id])
+  primitive Primitive @relation(fields: [primitiveId], references: [id])
 }
