@@ -22,20 +22,9 @@ export async function POST(request: Request) {
     return NextResponse.json({ shortname: result.shortname });
     
   } catch (error) {
-    // Properly structure the error response
-    const errorResponse = {
+    return NextResponse.json({ 
       error: 'Failed to create container',
-      details: error instanceof Error ? error.message : 'Unknown error',
-      // Include stack trace in development
-      ...(process.env.NODE_ENV === 'development' && error instanceof Error && {
-        stack: error.stack,
-        name: error.name
-      })
-    };
-
-    // Use console.error for server-side logging
-    console.error(JSON.stringify(errorResponse, null, 2));
-
-    return NextResponse.json(errorResponse, { status: 500 });
+      details: error instanceof Error ? error.message : 'Unknown error'
+    }, { status: 500 });
   }
 }

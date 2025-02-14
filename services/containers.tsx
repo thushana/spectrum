@@ -21,7 +21,6 @@ export class ContainerService {
 
     try {
       const result = await prisma.$transaction(async (tx) => {
-        // Create shortname first
         const shortname = await tx.shortname.create({
           data: {
             id: crypto.randomUUID(),
@@ -29,20 +28,15 @@ export class ContainerService {
             entityId,
             entityType: 'Container',
           },
-        }).catch(error => {
-          throw new Error(`Failed to create shortname: ${error.message}`);
         });
 
-        // Then create container with matching ID
         const container = await tx.container.create({
           data: {
-            id: entityId,  // This matches shortname's entityId
+            id: entityId,
             title,
             subtitle: subtitle || null,
             type,
           },
-        }).catch(error => {
-          throw new Error(`Failed to create container: ${error.message}`);
         });
 
         return {
@@ -53,10 +47,9 @@ export class ContainerService {
 
       return result;
     } catch (error) {
-      if (error instanceof Error) {
-        throw new Error(`Transaction failed: ${error.message}`);
-      }
-      throw new Error('Transaction failed with unknown error');
+      throw error instanceof Error 
+        ? error 
+        : new Error('Failed to create container');
     }
   }
 }
